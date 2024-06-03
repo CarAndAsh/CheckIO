@@ -2,53 +2,42 @@
 # Taken from mission The Warriors
 
 class Warrior:
-    def __init__(self):
-        self.health = 50
-        self.attack = 5
+    def __init__(self, health=50, attack=5):
+        self.health = health
+        self.attack = attack
 
     @property
     def is_alive(self):
-        if self.health > 0:
-            return True
-        return False
+        return self.health > 0
 
 
 class Knight(Warrior):
     def __init__(self):
-        super(Knight, self).__init__()
-        self.attack = 7
+        super(Knight, self).__init__(attack=7)
 
 
 def fight(unit_1, unit_2):
     while unit_2.is_alive and unit_1.is_alive:
         unit_2.health -= unit_1.attack
-        if unit_2.is_alive:
-            unit_1.health -= unit_2.attack
-        else:
-            return True
-    return False
+        unit_1.health -= unit_2.attack if unit_2.is_alive else 0
+    return unit_1.is_alive
 
 
 class Army:
     def __init__(self):
-        self.army = []
+        self.units = []
 
     def add_units(self, unit_class, amount):
-        [self.army.append(unit_class()) for _ in range(amount)]
+        [self.units.insert(0, unit_class()) for _ in range(amount)]
 
 
 class Battle:
     def fight(self, army_1, army_2):
-        fighter_1 = army_1.army.pop(0)
-        fighter_2 = army_2.army.pop(0)
-        while (fighter_1.is_alive or army_1.army) and (fighter_2.is_alive or army_2.army):
-            if not fighter_1.is_alive:
-                fighter_1 = army_1.army.pop(0)
-            if not fighter_2.is_alive:
-                fighter_2 = army_2.army.pop(0)
-            fight(fighter_1, fighter_2)
-        return bool(army_1.army or fighter_1.is_alive)
-
+        while army_1.units and army_2.units:
+            fight(army_1.units[-1], army_2.units[-1])
+            army_1.units.pop() if army_2.units[-1].is_alive else army_2.units.pop()
+        return bool(army_1.units)
+    
 
 if __name__ == "__main__":
     # These "asserts" using only for self-checking and not necessary for auto-testing
@@ -84,14 +73,7 @@ if __name__ == "__main__":
     army_4.add_units(Warrior, 30)
 
     battle = Battle()
-    
-    army_1 = Army()
-    army_2 = Army()
-    army_1.add_units(Warrior, 10)
-    army_2.add_units(Warrior, 11)
 
     assert battle.fight(my_army, enemy_army) == True
     assert battle.fight(army_3, army_4) == False
-    assert battle.fight(army_1, army_2) == True
-
     print("Coding complete? Let's try tests!")

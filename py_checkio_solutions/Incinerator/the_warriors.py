@@ -1,20 +1,17 @@
 #!/usr/bin/env checkio --domain=py run the-warriors
 class Warrior:
-    def __init__(self):
-        self.health = 50
-        self.attack = 5
+    def __init__(self, health=50, attack=5):
+        self.health = health
+        self.attack = attack
 
     @property
     def is_alive(self):
-        if self.health > 0:
-            return True
-        return False
+        return self.health > 0
 
 
 class Knight(Warrior):
     def __init__(self):
-        super(Knight, self).__init__()
-        self.attack = 7
+        super(Knight, self).__init__(attack=7)
 
 
 def fight(unit_1, unit_2):
@@ -22,9 +19,7 @@ def fight(unit_1, unit_2):
         unit_2.health -= unit_1.attack
         if unit_2.is_alive:
             unit_1.health -= unit_2.attack
-        else:
-            return True
-    return False
+    return unit_1.is_alive
 
 
 if __name__ == "__main__":

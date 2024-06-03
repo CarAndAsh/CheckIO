@@ -1,74 +1,54 @@
 #!/usr/bin/env checkio --domain=py run the-defenders
 # Taken from mission Army Battles
 # Taken from mission The Warriors
-
-
 class Warrior:
-    def __init__(self):
-        self.health = 50
-        self.attack = 5
-        self.defense = 0
+    def __init__(self, health=50, attack=5, defense=0):
+        self.health = health
+        self.attack = attack
+        self.defense = defense
 
     @property
     def is_alive(self):
-        if self.health > 0:
-            return True
-        return False
+        return self.health > 0
+
+    def __sub__(self, other):
+        if isinstance(other, Warrior):
+            self.health -= dmg if (dmg := other.attack - self.defense) > 0 else 0
+        elif isinstance(other, int):
+            self.health -= other
 
 
 class Knight(Warrior):
     def __init__(self):
-        super(Knight, self).__init__()
-        self.attack = 7
+        super(Knight, self).__init__(attack=7)
 
 
 class Defender(Warrior):
     def __init__(self):
-        super(Defender, self).__init__()
-        self.health = 60
-        self.attack = 3
-        self.defense = 2
+        super(Defender, self).__init__(health=60, attack=3, defense=2)
 
 
 def fight(unit_1, unit_2):
     while unit_2.is_alive and unit_1.is_alive:
-        unit_2.health -= (
-            (unit_1.attack - unit_2.defense)
-            if unit_1.attack > unit_1.defense
-            else 0
-        )
-        if unit_2.is_alive:
-            unit_1.health -= (
-                (unit_2.attack - unit_1.defense)
-                if unit_2.attack > unit_2.defense
-                else 0
-            )
-        else:
-            return True
-    return False
+        unit_2 - unit_1
+        unit_1 - unit_2 if unit_2.is_alive else 0
+    return unit_1.is_alive
 
 
 class Army:
     def __init__(self):
-        self.army = []
+        self.units = []
 
     def add_units(self, unit_class, amount):
-        [self.army.append(unit_class()) for _ in range(amount)]
+        [self.units.insert(0, unit_class()) for _ in range(amount)]
 
 
 class Battle:
     def fight(self, army_1, army_2):
-        fighter_1 = army_1.army.pop(0)
-        fighter_2 = army_2.army.pop(0)
-        while (fighter_1.is_alive or army_1.army) and (
-                fighter_2.is_alive or army_2.army
-        ):
-            if not fighter_1.is_alive:
-                fighter_1 = army_1.army.pop(0)
-            if not fighter_2.is_alive:
-                fighter_2 = army_2.army.pop(0)
-            fight(fighter_1, fighter_2)
-        return bool(army_1.army or fighter_1.is_alive)
+        while army_1.units and army_2.units:
+            fight(army_1.units[-1], army_2.units[-1])
+            army_1.units.pop() if army_2.units[-1].is_alive else army_2.units.pop()
+        return bool(army_1.units)
 
 
 if __name__ == "__main__":
@@ -114,5 +94,4 @@ if __name__ == "__main__":
 
     assert battle.fight(my_army, enemy_army) == False
     assert battle.fight(army_3, army_4) == True
-
     print("Coding complete? Let's try tests!")
