@@ -15,7 +15,7 @@ class Warrior:
     def is_alive(self):
         return self.health > 0
 
-    def hit(self, enemy, enemy_army):
+    def hit(self, enemy, enemy_army=None):
         if isinstance(enemy, Warrior):
             enemy.health -= dmg if (dmg := (self.attack - enemy.defense)) > 0 else 0
         if isinstance(self, Lancer) and enemy_army:
@@ -136,3 +136,15 @@ if __name__ == "__main__":
     assert battle.fight(my_army, enemy_army) == True
     assert battle.fight(army_3, army_4) == False
     print("Coding complete? Let's try tests!")
+
+    # for Warrior:
+    #
+    # def hit(self, unit, army=None):
+    #     unit.health -= max(0, (self.attack - unit.defense))
+    #
+    # for Vamp:
+    #
+    # def hit(self, unit, army=None):
+    #     super().hit(unit, army)
+    #     self.health +=  max(0, self.attack - unit.defense) // 2
+    #
